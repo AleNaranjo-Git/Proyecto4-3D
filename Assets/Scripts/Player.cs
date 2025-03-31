@@ -20,6 +20,11 @@ public class Player : MonoBehaviour
     private Vector3 camFoward;
     private Vector3 camRight;
 
+    public bool isOnSlope;
+    private Vector3 hitNormal;
+    public float slideVelocity;
+    public float slopeForceDown;
+
     void Start()
     {
         player = GetComponent<CharacterController>();
@@ -39,7 +44,7 @@ public class Player : MonoBehaviour
         movePlayer = playerInput.x * camRight + playerInput.z * camFoward;
 
         movePlayer = movePlayer * playerSpeed;
-        
+
         player.transform.LookAt(player.transform.position + movePlayer);
 
         SetGravity();
@@ -62,6 +67,15 @@ public class Player : MonoBehaviour
         camRight = camRight.normalized;
     }
 
+    public void PlayerSkills()
+    {
+        if (player.isGrounded && Input.GetButtonDown("Jump"))
+        {
+            fallVelocity = jumpForce;
+            movePlayer.y = fallVelocity;
+        }
+    }
+
     void SetGravity()
     {
 
@@ -75,14 +89,25 @@ public class Player : MonoBehaviour
             fallVelocity -= gravity * Time.deltaTime;
             movePlayer.y = fallVelocity;
         }
+
+        SlideDown();
     }
 
-    public void PlayerSkills()
+    void SlideDown()
     {
-        if(player.isGrounded && Input.GetButtonDown("Jump"))
+        isOnSlope = Vector3.Angle(Vector3.up, hitNormal) >= player.slopeLimit;
+
+        if (isOnSlope)
         {
-            fallVelocity = jumpForce;
-            movePlayer.y = fallVelocity;
+            movePlayer.x += ((1f - hitNormal.y) * hitNormal.x) * slideVelocity;
+            movePlayer.z += ((1f - hitNormal.y) * hitNormal.z) * slideVelocity;
+
+            movePlayer.y += slopeForceDown;
         }
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        hitNormal = hit.normal;
     }
 }
