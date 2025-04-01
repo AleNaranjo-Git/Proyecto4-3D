@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private Vector3 playerInput;
 
     public CharacterController player;
+    public Animator animator;
 
     public float playerSpeed;
     private Vector3 movePlayer;
@@ -20,7 +21,7 @@ public class Player : MonoBehaviour
     private Vector3 camFoward;
     private Vector3 camRight;
 
-    public bool isOnSlope;
+    public bool isOnSlope = false;
     private Vector3 hitNormal;
     public float slideVelocity;
     public float slopeForceDown;
@@ -28,6 +29,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         player = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -44,12 +46,18 @@ public class Player : MonoBehaviour
         movePlayer = playerInput.x * camRight + playerInput.z * camFoward;
 
         movePlayer = movePlayer * playerSpeed;
-
+        
         player.transform.LookAt(player.transform.position + movePlayer);
 
         SetGravity();
 
         PlayerSkills();
+
+        //INDICA SI TOCA EL SUELO
+        animator.SetBool("IsGrounded", player.isGrounded);
+
+        //ENVIA LA VELOCIDAD AL ARBOL DE ANIMACION
+        animator.SetFloat("Velocity", player.velocity.magnitude);
 
         //MUEVE EL JUGADOR
         player.Move(movePlayer * Time.deltaTime);
@@ -73,12 +81,12 @@ public class Player : MonoBehaviour
         {
             fallVelocity = jumpForce;
             movePlayer.y = fallVelocity;
+            animator.SetTrigger("Jump");
         }
     }
 
     void SetGravity()
     {
-
         if (player.isGrounded)
         {
             fallVelocity = -gravity * Time.deltaTime;
@@ -89,20 +97,20 @@ public class Player : MonoBehaviour
             fallVelocity -= gravity * Time.deltaTime;
             movePlayer.y = fallVelocity;
         }
-
         SlideDown();
     }
 
     void SlideDown()
     {
         isOnSlope = Vector3.Angle(Vector3.up, hitNormal) >= player.slopeLimit;
-
         if (isOnSlope)
         {
-            movePlayer.x += ((1f - hitNormal.y) * hitNormal.x) * slideVelocity;
-            movePlayer.z += ((1f - hitNormal.y) * hitNormal.z) * slideVelocity;
-
-            movePlayer.y += slopeForceDown;
+            //DESLIZA EN EJE X
+            movePlayer.x += ((1 - hitNormal.x) * hitNormal.x) * slideVelocity;
+            //DESLIZA EN EJE Z
+            movePlayer.z += ((1 - hitNormal.z) * hitNormal.z) * slideVelocity;
+            //DESLIZA EN EJE Y
+            movePlayer.y = slopeForceDown;
         }
     }
 

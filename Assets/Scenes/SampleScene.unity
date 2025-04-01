@@ -3064,6 +3064,7 @@ MonoBehaviour:
   horizontalMove: 0
   verticalMove: 0
   player: {fileID: 1096520909}
+  animator: {fileID: 0}
   playerSpeed: 10
   gravity: 9.8
   fallVelocity: 0
@@ -4284,13 +4285,14 @@ MonoBehaviour:
   horizontalMove: 0
   verticalMove: 0
   player: {fileID: 1096520909}
-  playerSpeed: 10
+  animator: {fileID: 0}
+  playerSpeed: 5
   gravity: 9.8
   fallVelocity: 0
   jumpForce: 5
   mainCamera: {fileID: 963194227}
   isOnSlope: 0
-  slideVelocity: 10
+  slideVelocity: 15
   slopeForceDown: -10
 --- !u!143 &1608544992
 CharacterController:
@@ -53452,6 +53454,7 @@ MonoBehaviour:
   horizontalMove: 0
   verticalMove: 0
   player: {fileID: 1773321920}
+  animator: {fileID: 0}
   playerSpeed: 10
   gravity: 9.8
   fallVelocity: 0
