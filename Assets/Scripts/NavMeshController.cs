@@ -19,4 +19,12 @@ public class NavMeshController : MonoBehaviour
     {
         agente.destination = objetivo.position;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            GetComponent<Animator>().Play("Attack");
+        }
+    }
 }
